@@ -1,7 +1,7 @@
 const web3 = require('web3');
 const fetch = require('node-fetch');
 const fs = require('fs');
-web3js = new web3(new web3.providers.HttpProvider("http://mainnet.infura.io/v3/6df3eeeda7354424a1af5db619918006"));
+web3js = new web3(new web3.providers.HttpProvider("http://localhost:8501"));
 var minter = require('minterjs-wallet');
 const express = require('express');
 const app = express();
