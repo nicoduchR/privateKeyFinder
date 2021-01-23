@@ -22,7 +22,7 @@
     "express": "^4.17.1",
     "http": "0.0.0",
     "minterjs-wallet": "6.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "web3": "^1.3.3"
   }
 }
