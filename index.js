@@ -2,24 +2,13 @@ const Web3 = require("web3")
 const fetch = require('node-fetch');
 const fs = require('fs');
 
-
 // Docker
 let web3js = new Web3('ws://blockchain:8546');
 
 // Local
-// web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:8501"));
 var minter = require('minterjs-wallet');
 const express = require('express');
 const app = express();
-console.log("WOLOLO")
-
-
-async function prout() {
-    var latest = await web3js.eth.getBlockNumber()
-    console.log(latest);
-}
-
-
 
 (function (delay, callback) {
 	var loop = function () {
@@ -31,6 +20,14 @@ async function prout() {
 });
 
 async function generatePrivateKey() {
+
+    var datetime = new Date();
+    let date = ("0" + datetime.getDate()).slice(-2);
+    let month = ("0" + (datetime.getMonth() + 1)).slice(-2);
+    let year = datetime.getFullYear();
+
+    let date_formatted = year + "-" + month + "-" + date;
+
     const wallet= minter.generateWallet();
 
     let privKey = wallet.getPrivateKeyString()
@@ -40,12 +37,12 @@ async function generatePrivateKey() {
 
     var balance = await web3js.eth.getBalance(address);
 
-    fs.appendFile('./keys/addresses.txt', `Adresse : ${address} , Mnemonic : ${mnemonic}, Key : ${privKey}, Balance: ${balance} \n`, async function (err) {
+    fs.appendFile(`./keys/addresses-${date_formatted}.txt`, `${address}, ${mnemonic}, ${privKey}, ${balance} \n`, async function (err) {
         if (err) throw err;
     });
 
     if(balance > 0){
-        fs.appendFile('./keys/not_empty_addresses.txt', `Adresse : ${address} , Key : ${wallet._mnemonic}, Balance: ${balance} \n`, async function (err) {
+        fs.appendFile(`./keys/not_empty_addresses-${date_formatted}.txt`, `${address}, ${mnemonic}, ${privKey}, ${balance} \n`, async function (err) {
             if (err) throw err;
         });
     }

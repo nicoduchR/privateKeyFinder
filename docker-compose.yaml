@@ -19,7 +19,7 @@ services:
       - 3000:3000
     container_name: private-key-finder
     volumes:
-      - ./keys/addresses.txt:/app/keys/addresses.txt
+      - ./keys/:/app/keys/
     networks:
     - test
 volumes:
