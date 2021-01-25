@@ -66,23 +66,6 @@ const HTTP_PORT = 3001;
 //         }
 //     });
 // }
-
-
-
-
-// SET STORAGE
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './generators/jackpot')
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.fieldname + '-' + Date.now())
-    }
-})
-  
-var upload = multer({ storage: storage })
-
-
   
 app.post('/api/1.0/register/:name', checkToken, function (req, res) {
     let name = req.params.name;
@@ -156,3 +139,5 @@ app.post('/api/1.0/upload/:name', async (req, res) => {
         res.status(500).send(err);
     }
 });
+
+app.listen(HTTP_PORT);
