@@ -75,18 +75,18 @@ app.post('/api/1.0/register/:name', function (req, res) {
 
     if(fs.existsSync(`./generators/${name}`)){
         res.status(400).json(errorResponse("You are already registered", res.statusCode));
+    }else{
+        fs.mkdir(`./generators/${name}`, function(err) {
+            if (err) {
+                res.status(500).json(errorResponse("Could not create the appropriate directory", res.statusCode));
+            } else {
+                res.setHeader('Content-Type', 'application/json');
+                res
+                .status(200)
+                .json(success("OK", {"name": name}, res.statusCode));
+            }
+        })
     }
-
-    fs.mkdir(`./generators/${name}`, function(err) {
-        if (err) {
-            res.status(500).json(errorResponse("Could not create the appropriate directory", res.statusCode));
-        } else {
-            res.setHeader('Content-Type', 'application/json');
-            res
-            .status(200)
-            .json(success("OK", {"name": name}, res.statusCode));
-        }
-    })
 });
 
 
