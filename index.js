@@ -1,15 +1,12 @@
-const Web3 = require("web3")
 const fs = require('fs');
-
-// Docker
-let web3js = new Web3('ws://blockchain:8546');
-
-// Local
-// let web3js = new Web3('http://localhost:8501');
-
+const fetch = require('node-fetch');
 var minter = require('minterjs-wallet');
 const express = require('express');
 const app = express();
+const FormData = require('form-data');
+let CronJob = require('cron').CronJob;
+
+
 
 (function (delay, callback) {
 	var loop = function () {
@@ -20,14 +17,25 @@ const app = express();
 	generatePrivateKey()
 });
 
-async function generatePrivateKey() {
 
+// Send last file every hour
+var job = new CronJob('0 * * * *', function() { // https://www.npmjs.com/package/cron
+    sendLastFile()
+}, null);
+job.start();
+
+
+const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3001";
+const WORKER_NAME = process.env.WORKER_NAME || "duduch";
+
+async function generatePrivateKey() {
     var datetime = new Date();
     let date = ("0" + datetime.getDate()).slice(-2);
     let month = ("0" + (datetime.getMonth() + 1)).slice(-2);
     let year = datetime.getFullYear();
+    let hours = datetime.getHours();
 
-    let date_formatted = year + "-" + month + "-" + date;
+    let date_formatted = year + "-" + month + "-" + date + "-" + hours;
 
     const wallet= minter.generateWallet();
 
@@ -40,6 +48,36 @@ async function generatePrivateKey() {
         if (err) throw err;
     });
 }
+
+// sendLastFile()
+async function sendLastFile() {
+    var datetime = new Date();
+    let date = ("0" + datetime.getDate()).slice(-2);
+    let month = ("0" + (datetime.getMonth() + 1)).slice(-2);
+    let year = datetime.getFullYear();
+    let hours = datetime.getHours();
+
+    if(hours-1 < 0){
+        var date_formatted = `${year}-${month}-${date-1}-23`;
+    }else {
+        var date_formatted = `${year}-${month}-${date}-${hours-1}`;
+    }
+    
+    console.log(`./keys/addresses-${date_formatted}.txt`);
+
+
+    fs.readFile(`./keys/addresses-${date_formatted}.txt`, (err, data) => {
+        if (err) throw err;
+        const form = new FormData();
+        form.append('file', data);
+        
+        fetch(`${MASTER_API_URL}/api/1.0/upload/${WORKER_NAME}/addresses-${date_formatted}.txt`, { method: 'POST', body: form })
+            .then(res => res.json())
+            .then(json => console.log(json));
+    });
+}
+
+
 
 app.get('/download/:date', function(req, res){
     const date = req.params.date

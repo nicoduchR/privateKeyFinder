@@ -18,7 +18,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      MASTER_API_URL: http://ec2-35-180-0-170.eu-west-3.compute.amazonaws.com:3001
+      WORKER_NAME: "Duduch-test"
+      MASTER_API_URL: http://localhost:3001
     container_name: private-key-finder
     volumes:
       - ./keys/:/app/keys/
