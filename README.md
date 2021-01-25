@@ -7,7 +7,7 @@ docker build -t nicoduch/private-key-finder .
 
 
 cd setup
-docker build -t nicoduch/blockchain .
+docker build -t redlabteam/blockchain .
 
 cd ..
 
