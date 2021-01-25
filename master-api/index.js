@@ -108,31 +108,39 @@ app.post('/api/1.0/jackpot', function (req, res) {
 });
 
 
-app.post('/api/1.0/upload/:name', async (req, res) => {
-
+app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
+    console.log("UPLOAD CALLED");
     let name = req.params.name;
-    if (name == undefined){
-        res.status(400).json(errorResponse("You need to pass a name in url", res.statusCode));
+    let filename = req.params.filename;
+
+    if (name == undefined || filename == undefined){
+        res.status(400).json(errorResponse("You need to pass a name and a filename in url: /upload/name/filename", res.statusCode));
     }
 
     try {
+        
         if(!req.files) {
             res.status(400).json(errorResponse("ERROR: No file uploaded", res.statusCode));
         } else {
             // Retrieve file from request. Must be multipart/form-data request
-            let upload = req.files.upload;
-            
-            //Use the mv() method to place the file in upload directory (i.e. "uploads")
-            upload.mv('./generators/' + name);
+            let data = req.files.file.data;
+
+            try {
+                fs.appendFile(`./generators/${name}/${filename}`, data, async function (err) {
+                    if (err) throw err;
+                });
+            } catch (error) {
+                res.status(400).json(errorResponse("You need to register first", res.statusCode));
+            }
 
             //send response
             res.setHeader('Content-Type', 'application/json');
             res
             .status(200)
             .json(success("OK", {
-                name: upload.name,
-                mimetype: upload.mimetype,
-                size: upload.size
+                name: data.name,
+                mimetype: data.mimetype,
+                size: data.size
             }, res.statusCode));
         }
     } catch (err) {
@@ -140,4 +148,4 @@ app.post('/api/1.0/upload/:name', async (req, res) => {
     }
 });
 
-app.listen(HTTP_PORT, () => console.log('Master listening on port 3000!'));
+app.listen(HTTP_PORT, () => console.log('Master listening on port 3001!'));
