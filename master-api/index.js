@@ -67,7 +67,7 @@ const HTTP_PORT = 3001;
 //     });
 // }
   
-app.post('/api/1.0/register/:name', checkToken, function (req, res) {
+app.post('/api/1.0/register/:name', function (req, res) {
     let name = req.params.name;
     if (name == undefined){
         res.status(400).json(errorResponse("You need to pass a name in url", res.statusCode));
@@ -90,7 +90,7 @@ app.post('/api/1.0/register/:name', checkToken, function (req, res) {
 });
 
 
-app.post('/api/1.0/jackpot', checkToken, function (req, res) {
+app.post('/api/1.0/jackpot', function (req, res) {
     let address = req.body.address;
     let mnemonic = req.body.mnemonic;
     let private = req.body.private;
@@ -140,4 +140,4 @@ app.post('/api/1.0/upload/:name', async (req, res) => {
     }
 });
 
-app.listen(HTTP_PORT);
+app.listen(HTTP_PORT, () => console.log('Master listening on port 3000!'));

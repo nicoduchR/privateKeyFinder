@@ -47,4 +47,6 @@ Wait for the blockchain to be synced with the network ...
 docker-compose up -d node
 ```
 
-
+```bash
+docker-compose up -d master
+```
