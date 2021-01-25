@@ -16,11 +16,16 @@ docker build -t redlabteam/private-key-finder .
 ```
 
 ```bash 
-cd setup
+cd blockchain
 docker build -t redlabteam/blockchain .
 cd ..
 ```
 
+```bash 
+cd master-api
+docker build --no-cache -t redlabteam/master-api .
+cd ..
+```
 
 ## Get the images :
 
