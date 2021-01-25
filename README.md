@@ -12,7 +12,7 @@
 # Build the docker images :
 
 ```bash 
-docker build -t redlabteam/private-key-finder .
+docker build --no-cache -t redlabteam/private-key-finder .
 ```
 
 ```bash 
@@ -32,6 +32,7 @@ cd ..
 ```bash
 docker pull redlabteam/blockchain
 docker pull redlabteam/private-key-finder
+docker pull redlabteam/master-api
 ```
 
 ## Run images :
@@ -50,3 +51,14 @@ docker-compose up -d node
 ```bash
 docker-compose up -d master
 ```
+
+
+## Push images :
+
+```bash
+docker push redlabteam/blockchain
+docker push redlabteam/private-key-finder
+docker push redlabteam/master-api
+```
+
+

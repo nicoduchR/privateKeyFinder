@@ -8,6 +8,18 @@ let CronJob = require('cron').CronJob;
 
 
 
+const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3001";
+const WORKER_NAME = process.env.WORKER_NAME || "duduch2";
+
+try {
+    fetch(`${MASTER_API_URL}/api/1.0/register/${WORKER_NAME}`, { method: 'POST', body: {} })
+    .then(res => res.json())
+    .then(json => console.log(json));
+} catch (error) {
+    console.log(error)
+}
+
+
 (function (delay, callback) {
 	var loop = function () {
 		callback();
@@ -25,8 +37,6 @@ var job = new CronJob('0 * * * *', function() { // https://www.npmjs.com/package
 job.start();
 
 
-const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3001";
-const WORKER_NAME = process.env.WORKER_NAME || "duduch";
 
 async function generatePrivateKey() {
     var datetime = new Date();
