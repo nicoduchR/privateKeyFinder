@@ -1,10 +1,24 @@
-const web3 = require('web3');
+const Web3 = require("web3")
 const fetch = require('node-fetch');
 const fs = require('fs');
-web3js = new web3(new web3.providers.HttpProvider("http://localhost:8501"));
+
+
+// Docker
+let web3js = new Web3('ws://blockchain:8546');
+
+// Local
+// web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:8501"));
 var minter = require('minterjs-wallet');
 const express = require('express');
 const app = express();
+console.log("WOLOLO")
+
+
+async function prout() {
+    var latest = await web3js.eth.getBlockNumber()
+    console.log(latest);
+}
+
 
 
 (function (delay, callback) {
@@ -12,71 +26,43 @@ const app = express();
 		callback();
 		setTimeout(loop, delay);
 	}; loop();
-})(500, function () {
+})(100, function () {
 	generatePrivateKey()
 });
 
-function generatePrivateKey() {
+async function generatePrivateKey() {
     const wallet= minter.generateWallet();
-    var privKey = wallet._privKey;
-    var account = web3js.eth.accounts.privateKeyToAccount(privKey);
-    var address = account.address;
-    
-    fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=YourApiKeyToken`)
-    .then(response => response.json())
-    .then(data => {
-        if(data.result != "0") {
-            console.log(data.result)
-            fs.appendFile('addresses.txt', `Adresse : ${address}, Amount : ${data.result} , Key : ${wallet._mnemonic} \n`, function (err) {
-                if (err) throw err;
-                console.log('Saved!');
-            });
-        }else{
 
-            fs.appendFile('empty.txt', `${address}\n`, function (err) {
-                if (err) throw err;
-                console.log('Saved!');
-            });
-            fs.appendFile('empty_private.txt', `${wallet._mnemonic}\n`, function (err) {
-                if (err) throw err;
-                console.log('Saved!');
-            });
-        } 
+    let privKey = wallet.getPrivateKeyString()
+    let mnemonic = wallet.getMnemonic();
+    let address = wallet.getAddressString()
+    address = '0x' + address.substring(2);
+
+    var balance = await web3js.eth.getBalance(address);
+
+    fs.appendFile('./keys/addresses.txt', `Adresse : ${address} , Mnemonic : ${mnemonic}, Key : ${privKey}, Balance: ${balance} \n`, async function (err) {
+        if (err) throw err;
     });
+
+    if(balance > 0){
+        fs.appendFile('./keys/not_empty_addresses.txt', `Adresse : ${address} , Key : ${wallet._mnemonic}, Balance: ${balance} \n`, async function (err) {
+            if (err) throw err;
+        });
+    }
 }
 
 
 
 
 app.get('/download', function(req, res){
-    const file = `${__dirname}/addresses.txt`;
+    const file = `${__dirname}/keys/addresses.txt`;
     res.download(file); // Set disposition and send it.
 });
 
-app.get('/download-empty-private', function(req, res){
-    const file = `${__dirname}/empty_private.txt`;
+app.get('/download-not-empty', function(req, res){
+    const file = `${__dirname}/keys/not_empty_addresses.txt`;
     res.download(file); // Set disposition and send it.
 });
 
-app.get('/download-empty', function(req, res){
-    const file = `${__dirname}/empty.txt`;
-    res.download(file); // Set disposition and send it.
-});
-
-
-app.get('/boop', function(req,res){
-    const wallet= minter.generateWallet();
-    var privKey = wallet._privKey;
-    var account = web3js.eth.accounts.privateKeyToAccount(privKey);
-    var address = account.address;
-    console.log(address);
-    fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=YourApiKeyToken`)
-    .then(response => response.json())
-    .then(data => {
-        console.log(data.result)
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({account: address, privateKey: wallet._mnemonic, amount : data.result}, null, 3));
-    });
-});
 app.listen(3000, () => console.log('Example app listening on port 3000!'));
 

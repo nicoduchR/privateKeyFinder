@@ -1,9 +1,8 @@
-FROM nicoduch/blockchain
+FROM node:12.18.1
 
 
-RUN sudo apt update
-RUN sudo apt install nodejs
-RUN sudo apt install npm
+RUN apt-get update -y
+
 
 ENV NODE_ENV=production
 
@@ -11,8 +10,10 @@ WORKDIR /app
 
 COPY ["package.json", "package-lock.json*", "./"]
 
-RUN npm install --production
+RUN npm i
 
 COPY ./index.js .
 
 CMD [ "node", "index.js" ]
+
+# # CMD [ "/bin/bash"]

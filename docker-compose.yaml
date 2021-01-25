@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+  # Blockchain
+  blockchain:
+    build: ./setup
+    image: nicoduch/blockchain
+    container_name: blockchain
+    ports:
+      - 8501:8501
+    volumes:
+      - private:/datadir
+    networks:
+    - test
+  # Node.js private key finder
+  node:
+    build: ./
+    image: nicoduch/private-key-finder
+    ports:
+      - 3000:3000
+    container_name: private-key-finder
+    volumes:
+      - ./keys/addresses.txt:/app/keys/addresses.txt
+    networks:
+    - test
+volumes:
+  private:
+
+networks:
+  test:
