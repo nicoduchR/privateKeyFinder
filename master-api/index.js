@@ -33,39 +33,8 @@ app.use(fileUpload({
  * Environment variables
  */
 
-const DB_USERNAME = process.env.DB_USERNAME;
-const DB_PASSWORD = process.env.DB_USERNAME;
 const HOST = process.env.HOST;
 const HTTP_PORT = 3001;
-
-
-// if(DB_USERNAME == undefined || DB_PASSWORD == undefined || HOST == undefined){
-//     throw "Environment parameter missing";
-// }
-
-// Prepare connection to database in possible future releases
-// var connection = mysql.createConnection({
-//     host: host,
-//     user: username,
-//     password: password,
-//     database: database
-// });
-
-// connectDB(connection);
-
-// function connectDB (connection){
-//     connection.connect(async function (err) {
-//         if (err) {
-//             connection.end();
-//             console.log('Taking a break...');
-//             setTimeout(() => {
-//                 connectDB(connection)
-//             }, 5000)
-//         }else{
-//             console.log('connected as id ' + connection.threadId);
-//         }
-//     });
-// }
   
 app.post('/api/1.0/register/:name', function (req, res) {
     let name = req.params.name;
@@ -89,22 +58,9 @@ app.post('/api/1.0/register/:name', function (req, res) {
     }
 });
 
-
-app.post('/api/1.0/jackpot', function (req, res) {
-    let address = req.body.address;
-    let mnemonic = req.body.mnemonic;
-    let private = req.body.private;
-
-    fs.appendFile(`./generators/jackpot/jackpot.txt`, `${address},${mnemonic},${private}\n`, async function (err) {
-        if (err) {
-            res.status(500).json(errorResponse(err, res.statusCode));
-        }
-    });
-
-    res.setHeader('Content-Type', 'application/json');
-    res
-    .status(200)
-    .json(success("OK", res.statusCode));
+app.get('/jackpot/', function(req, res){
+    const file = `${__dirname}/generators/jackpot/jackpot.txt`;
+    res.download(file); // Set disposition and send it.
 });
 
 
