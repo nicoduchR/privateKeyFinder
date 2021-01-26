@@ -10,6 +10,7 @@ let moment = require('moment');
 
 const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3001";
 const WORKER_NAME = process.env.WORKER_NAME || "duduch";
+const HTTP_PORT = 3333;
 
 try {
     fetch(`${MASTER_API_URL}/api/1.0/register/${WORKER_NAME}`, { method: 'POST', body: {} })
@@ -100,5 +101,5 @@ app.get('/download-not-empty/:date', function(req, res){
     res.download(file);
 });
 
-app.listen(3000, () => console.log('Private key finder listening on port 3000!'));
+app.listen(HTTP_PORT, () => console.log('Private key finder listening on port 3000!'));
 

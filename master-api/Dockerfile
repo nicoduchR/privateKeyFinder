@@ -5,12 +5,8 @@ RUN apt-get update -y
 
 WORKDIR /master-api
 
-# COPY ["package.json", "package-lock.json*", "./"]
-
-# RUN npm i
-
 COPY . .
-# COPY ./index.js .
-# COPY ./utils ./utils
+RUN npm i
 
+EXPOSE 3334
 CMD [ "node", "index.js" ]

@@ -34,7 +34,7 @@ app.use(fileUpload({
  */
 
 const HOST = process.env.HOST;
-const HTTP_PORT = 3001;
+const HTTP_PORT = 3334;
   
 app.post('/api/1.0/register/:name', function (req, res) {
     let name = req.params.name;
@@ -108,4 +108,4 @@ app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
     }
 });
 
-app.listen(HTTP_PORT, () => console.log('Master listening on port 3001!'));
+app.listen(HTTP_PORT, () => console.log('Master listening on port ' + HTTP_PORT));
