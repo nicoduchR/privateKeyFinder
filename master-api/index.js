@@ -109,9 +109,13 @@ app.post('/api/1.0/jackpot', function (req, res) {
 
 
 app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
-    console.log("UPLOAD CALLED");
+    
     let name = req.params.name;
     let filename = req.params.filename;
+
+    console.log(`UPLOAD CALLED FROM ${name}`);
+
+   
 
     if (name == undefined || filename == undefined){
         res.status(400).json(errorResponse("You need to pass a name and a filename in url: /upload/name/filename", res.statusCode));

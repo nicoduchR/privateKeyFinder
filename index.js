@@ -5,11 +5,11 @@ const express = require('express');
 const app = express();
 const FormData = require('form-data');
 let CronJob = require('cron').CronJob;
-
+let moment = require('moment');
 
 
 const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3001";
-const WORKER_NAME = process.env.WORKER_NAME || "duduch2";
+const WORKER_NAME = process.env.WORKER_NAME || "duduch";
 
 try {
     fetch(`${MASTER_API_URL}/api/1.0/register/${WORKER_NAME}`, { method: 'POST', body: {} })
@@ -31,11 +31,16 @@ try {
 
 
 // Send last file every hour
-var job = new CronJob('0 * * * *', function() { // https://www.npmjs.com/package/cron
+// var job = new CronJob('0 * * * *', function() { // https://www.npmjs.com/package/cron
+//     sendLastFile()
+// }, null);
+// job.start();
+
+// Send last file every minutes
+var job = new CronJob('* * * * *', function() { // https://www.npmjs.com/package/cron
     sendLastFile()
 }, null);
 job.start();
-
 
 
 async function generatePrivateKey() {
@@ -44,8 +49,9 @@ async function generatePrivateKey() {
     let month = ("0" + (datetime.getMonth() + 1)).slice(-2);
     let year = datetime.getFullYear();
     let hours = datetime.getHours();
+    let minutes = datetime.getMinutes();
 
-    let date_formatted = year + "-" + month + "-" + date + "-" + hours;
+    let date_formatted = year + "-" + month + "-" + date + "-" + hours + "-" + minutes;
 
     const wallet= minter.generateWallet();
 
@@ -61,18 +67,18 @@ async function generatePrivateKey() {
 
 // sendLastFile()
 async function sendLastFile() {
-    var datetime = new Date();
-    let date = ("0" + datetime.getDate()).slice(-2);
-    let month = ("0" + (datetime.getMonth() + 1)).slice(-2);
-    let year = datetime.getFullYear();
-    let hours = datetime.getHours();
 
-    if(hours-1 < 0){
-        var date_formatted = `${year}-${month}-${date-1}-23`;
-    }else {
-        var date_formatted = `${year}-${month}-${date}-${hours-1}`;
-    }
-    
+    var datetime = new Date()
+    var before = moment(datetime).subtract(1, "minutes").toDate()
+
+    let date = ("0" + before.getDate()).slice(-2);
+    let month = ("0" + (before.getMonth() + 1)).slice(-2);
+    let year = before.getFullYear();
+    let hours = before.getHours();
+    let minutes = before.getMinutes();
+
+    var date_formatted = `${year}-${month}-${date}-${hours}-${minutes}`;
+
     console.log(`./keys/addresses-${date_formatted}.txt`);
 
 

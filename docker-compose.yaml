@@ -19,7 +19,7 @@ services:
       - 3000:3000
     environment:
       WORKER_NAME: "Duduch-test"
-      MASTER_API_URL: http://localhost:3001
+      MASTER_API_URL: http://master:3001
     container_name: private-key-finder
     volumes:
       - ./keys/:/app/keys/

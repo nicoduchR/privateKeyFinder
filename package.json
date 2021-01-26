@@ -22,6 +22,7 @@
     "express": "^4.17.1",
     "form-data": "^3.0.0",
     "minterjs-wallet": "6.0.0",
+    "moment": "^2.29.1",
     "node-fetch": "^2.6.1"
   }
 }
