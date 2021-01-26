@@ -9,7 +9,7 @@ RUN apt-get install -y software-properties-common \
 RUN apt-get -y install sudo
 
 RUN echo "ac934d5957cf99bdf11944cbcc22b004844ab8a780709882dcff181a76eb8b4a" >> ./key.txt
-RUN echo "@nicoduch_974" >> ./password.txt
+RUN echo "dumb_password" >> ./password.txt
 RUN geth account import --datadir ./datadir --password ./password.txt ./key.txt
 
 

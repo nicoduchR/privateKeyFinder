@@ -2,8 +2,8 @@ version: '3.7'
 services:
   # Blockchain
   blockchain:
-    build: ./setup
-    image: nicoduch/blockchain
+    build: ./blockchain
+    image: redlabteam/blockchain
     container_name: blockchain
     ports:
       - 8501:8501
@@ -14,7 +14,7 @@ services:
   # Node.js private key finder
   node:
     build: ./
-    image: nicoduch/private-key-finder
+    image: redlabteam/private-key-finder
     ports:
       - 3000:3000
     container_name: private-key-finder

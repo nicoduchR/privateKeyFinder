@@ -1,31 +1,45 @@
-# privateKeyFinder
+
+    ______        _                _                  _   __                     ______  _             _             
+    | ___ \      (_)              | |                | | / /                     |  ___|(_)           | |            
+    | |_/ / _ __  _ __   __  __ _ | |_   ___  ______ | |/ /   ___  _   _  ______ | |_    _  _ __    __| |  ___  _ __ 
+    |  __/ | '__|| |\ \ / / / _` || __| / _ \|______||    \  / _ \| | | ||______||  _|  | || '_ \  / _` | / _ \| '__|
+    | |    | |   | | \ V / | (_| || |_ |  __/        | |\  \|  __/| |_| |        | |    | || | | || (_| ||  __/| |   
+    \_|    |_|   |_|  \_/   \__,_| \__| \___|        \_| \_/ \___| \__, |        \_|    |_||_| |_| \__,_| \___||_|   
+                                                                    __/ |                                            
+                                                                   |___/                                             
 
 
-## Build the blockchain docker image :
+# Build the docker images :
 
 ```bash 
-docker build -t nicoduch/private-key-finder .
+docker build -t redlabteam/private-key-finder .
+```
 
-
+```bash 
 cd setup
 docker build -t redlabteam/blockchain .
-
 cd ..
 ```
+
+
 ## Get the images :
 
 ```bash
-docker pull nicoduch/blockchain
-docker pull nicoduch/private-key-finder
+docker pull redlabteam/blockchain
+docker pull redlabteam/private-key-finder
 ```
 
-## Run image :
+## Run images :
+
+```bash
+docker-compose up -d blockchain
+```
+
+Wait for the blockchain to be synced with the network ...
 
 
-``docker-compose up -d blockchain``
+```bash
+docker-compose up -d node
+```
 
 
-Wait for the blockchain to be synced with the network
-
-
-``docker-compose up -d node``
