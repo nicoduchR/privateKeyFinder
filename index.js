@@ -21,6 +21,15 @@ try {
 }
 
 
+if (fs.existsSync("./keys") == false) {
+    fs.mkdir("./keys", (err) => {
+        if (err) {
+            throw err;
+        }
+    })
+}
+
+
 (function (delay, callback) {
 	var loop = function () {
 		callback();
