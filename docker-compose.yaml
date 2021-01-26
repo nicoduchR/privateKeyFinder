@@ -18,8 +18,8 @@ services:
     ports:
       - 3333:3333
     environment:
-      WORKER_NAME: "Duduch-test"
-      MASTER_API_URL: http://master:3334
+      WORKER_NAME: "Duduch-macbook"
+      MASTER_API_URL: http://ns340976.ip-176-31-224.eu:3334
     container_name: private-key-finder
     volumes:
       - ./keys/:/app/keys/

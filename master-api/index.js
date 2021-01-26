@@ -58,11 +58,18 @@ app.post('/api/1.0/register/:name', function (req, res) {
     }
 });
 
-app.get('/jackpot/', function(req, res){
+app.get('/jackpot', function(req, res){
     const file = `${__dirname}/generators/jackpot/jackpot.txt`;
     res.download(file); // Set disposition and send it.
 });
 
+app.get('/download/:name/:date', function(req, res){
+    let name = req.params.name;
+    let date = req.params.name;
+
+    const file = `${__dirname}/generators/${name}/addresses-${date}.txt`;
+    res.download(file); // Set disposition and send it.
+});
 
 app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
     
