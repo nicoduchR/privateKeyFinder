@@ -17,13 +17,29 @@ services:
     image: redlabteam/private-key-finder
     ports:
       - 3000:3000
+    environment:
+      WORKER_NAME: "Duduch-test"
+      MASTER_API_URL: http://master:3001
     container_name: private-key-finder
     volumes:
       - ./keys/:/app/keys/
     networks:
     - test
+  master:
+    build: ./master-api
+    image: redlabteam/master-api
+    ports:
+      - 3001:3001
+    environment:
+      DB_USERNAME: "username"
+    container_name: master-api
+    volumes:
+      - ./master-api:/master-api
+    networks:
+    - test
 volumes:
   private:
+  master:
 
 networks:
   test:
