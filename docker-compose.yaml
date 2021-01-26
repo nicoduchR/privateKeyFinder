@@ -30,11 +30,9 @@ services:
     image: redlabteam/master-api
     ports:
       - 3334:3334
-    environment:
-      DB_USERNAME: "username"
     container_name: master-api
     volumes:
-      - ./master-api:/master-api
+      - ./master-api/generators:/master-api/generators
     networks:
     - test
 volumes:
