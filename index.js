@@ -29,13 +29,6 @@ try {
 	generatePrivateKey()
 });
 
-
-// Send last file every hour
-// var job = new CronJob('0 * * * *', function() { // https://www.npmjs.com/package/cron
-//     sendLastFile()
-// }, null);
-// job.start();
-
 // Send last file every minutes
 var job = new CronJob('* * * * *', function() { // https://www.npmjs.com/package/cron
     sendLastFile()
@@ -92,6 +85,20 @@ async function sendLastFile() {
             .then(json => console.log(json));
     });
 }
+
+
+
+app.get('/download/:date', function(req, res){
+    const date = req.params.date
+    const file = `${__dirname}/keys/addresses-${date}.txt`;
+    res.download(file); // Set disposition and send it.
+});
+
+app.get('/download-not-empty/:date', function(req, res){
+    const date = req.params.date
+    const file = `${__dirname}/keys/not_empty_addresses-${date}.txt`;
+    res.download(file);
+});
 
 app.listen(3000, () => console.log('Private key finder listening on port 3000!'));
 
