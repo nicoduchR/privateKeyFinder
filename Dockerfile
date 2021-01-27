@@ -5,6 +5,8 @@ RUN apt-get update -y
 
 WORKDIR /app
 
+RUN mkdir keys
+
 COPY ["package.json", "package-lock.json*", "./"]
 
 RUN npm i

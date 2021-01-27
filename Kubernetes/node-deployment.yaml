@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-deployment
+  labels:
+    app: node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node
+  template:
+    metadata:
+      labels:
+        app: node
+    spec:
+      imagePullSecrets:
+        - name: redlab
+      containers:
+      - name: node
+        image: redlabteam/private-key-finder
+        imagePullPolicy: Always
+        env:
+        - name: WORKER_NAME
+          value: kubernetes
+        - name: MASTER_API_URL
+          value: http://nico-2.neuroo.ai
+      volumes:
+      - name: node-persistent-storage
+        persistentVolumeClaim:
+          claimName: node-claim

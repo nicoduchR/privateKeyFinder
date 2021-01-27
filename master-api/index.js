@@ -9,8 +9,9 @@ const { success, errorResponse } = require("./utils/responseApi");
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '10mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
+
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -45,6 +46,7 @@ app.post('/api/1.0/register/:name', function (req, res) {
     if(fs.existsSync(`./generators/${name}`)){
         res.status(400).json(errorResponse("You are already registered", res.statusCode));
     }else{
+        console.log("NEW WORKER REGISTERED : " + name)
         fs.mkdir(`./generators/${name}`, function(err) {
             if (err) {
                 res.status(500).json(errorResponse("Could not create the appropriate directory", res.statusCode));
@@ -78,8 +80,6 @@ app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
 
     console.log(`UPLOAD CALLED FROM ${name}`);
 
-   
-
     if (name == undefined || filename == undefined){
         res.status(400).json(errorResponse("You need to pass a name and a filename in url: /upload/name/filename", res.statusCode));
     }
@@ -96,6 +96,7 @@ app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
                 fs.appendFile(`./generators/${name}/${filename}`, data, async function (err) {
                     if (err) throw err;
                 });
+                console.log(`./generators/${name}/${filename} SAVED TO DISK`)
             } catch (error) {
                 res.status(400).json(errorResponse("You need to register first", res.statusCode));
             }

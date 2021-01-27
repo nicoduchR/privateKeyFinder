@@ -62,3 +62,21 @@ docker push redlabteam/master-api
 ```
 
 
+
+## Find where keys are stocked on kubernetes cluster :
+
+find / -xdev 2>/dev/null -name "generators"
+
+/var/lib/docker/overlay2/be96bd9b3166a858dcfb0e9c87b790d8559c87cda905aca63297569e455f1574/diff/master-api/generators
+
+
+
+## Full clean :
+
+docker rm -f $(docker ps -qa)
+docker volume rm $(docker volume ls -q)
+cleanupdirs="/var/lib/etcd /etc/kubernetes /etc/cni /opt/cni /var/lib/cni /var/run/calico /opt/rke /mnt/data /mnt/data-keycloak"
+for dir in $cleanupdirs; do
+  echo "Removing $dir"
+  rm -rf $dir
+done
