@@ -3,15 +3,20 @@
 contact_mode=""
 addresses_file=""
 while [[ $# -gt 0 ]]; do
-echo "$@"
-
     key="$1"
     case $key in
     --http)
         contact_mode="http"
+        echo "ERROR: NOT HANDLED"
+        exit 1
         ;;
     --ws)
         contact_mode="ws"
+        echo "ERROR: NOT HANDLED"
+        exit 1
+        ;;
+    --ipc)
+        contact_mode="ipc"
         ;;
     --file | -f)
         addresses_file="$2"
@@ -31,3 +36,9 @@ if [[ -z $addresses_file ]]; then
     exit 1
 fi
 echo "INFO - addresses file is set to $addresses_file"
+
+awk -f http-awk-check.awk $addresses_file | netcat -N -U /home/hduser/.ethereum/geth.ipc > results
+
+
+
+
