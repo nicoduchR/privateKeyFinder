@@ -17,7 +17,7 @@ docker build --no-cache -t redlabteam/private-key-finder .
 
 ```bash 
 cd blockchain
-docker build -t redlabteam/blockchain .
+docker build --no-cache -t redlabteam/blockchain .
 cd ..
 ```
 
