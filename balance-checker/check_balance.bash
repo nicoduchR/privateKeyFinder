@@ -37,8 +37,7 @@ if [[ -z $addresses_file ]]; then
 fi
 echo "INFO - addresses file is set to $addresses_file"
 
-awk -f http-awk-check.awk $addresses_file | netcat -N -U /home/hduser/.ethereum/geth.ipc > results
-
+awk -f gen-bulk-ipc-query.awk $addresses_file | netcat -N -U /home/hduser/.ethereum/geth.ipc > bulk_results
 
 
 
