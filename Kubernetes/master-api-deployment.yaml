@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master-api-deployment
+  labels:
+    app: master-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master-api
+  template:
+    metadata:
+      labels:
+        app: master-api
+    spec:
+      imagePullSecrets:
+        - name: redlab
+      containers:
+      - name: private-key-finder
+        image: redlabteam/master-api
+        imagePullPolicy: Always
+      volumes:
+      - name: master-api-persistent-storage
+        persistentVolumeClaim:
+          claimName: master-api-claim
