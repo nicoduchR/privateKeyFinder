@@ -13,7 +13,7 @@ RUN echo "dumb_password" >> ./password.txt
 RUN geth account import --datadir ./datadir --password ./password.txt ./key.txt
 
 
-COPY ./light.sh .
-RUN chmod +x /light.sh
+COPY ./fast.sh .
+RUN chmod +x /fast.sh
 EXPOSE 8501
-CMD [ "bash", "light.sh" ]
+CMD [ "bash", "fast.sh" ]
