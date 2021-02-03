@@ -61,6 +61,30 @@ docker push redlabteam/private-key-finder
 docker push redlabteam/master-api
 ```
 
+## Balance checker
+
+
+The balance checker takes several parameters:
+
+Example: 
+```bash
+bash check_balance.bash --ipc --folder "/home/hduser/Desktop/privateKeyFinder/keys/*"  --jackpot jackpot.txt
+
+# OR
+
+bash check_balance.bash --ipc --file ../keys/addresses-2021-02-01-18-23.txt  --jackpot jackpot.txt
+```
+
+- ``--ipc``: inform that we use IPC to contact the blockchain. ws and http not handled by the script
+- ``--folder`` : specify the folder in which the files are.
+- `--file` if only one file should be checked, specify it with this flag. WARNING: --folder and --file cannot work together
+- `--jackpot`: specify the jackpot file
+
+### Behavior
+
+The files containing the addresses are deleted after they are checked.
+
+The bulk result file is deleted after a file a analysed.
 
 
 ## Find where keys are stocked on kubernetes cluster :
@@ -80,3 +104,4 @@ for dir in $cleanupdirs; do
   echo "Removing $dir"
   rm -rf $dir
 done
+
