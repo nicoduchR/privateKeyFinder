@@ -10,10 +10,17 @@ RUN apt-get -y install sudo
 
 RUN sudo apt-get -y update
 RUN sudo apt-get -y install nodejs npm
+RUN sudo apt-get -y install netcat-openbsd
+
+#Install Cron
+RUN apt-get update -y
+RUN apt-get -y install cron
+
 
 WORKDIR /blockchain-master
 COPY . .
 
 RUN chmod +x light.sh
+
 EXPOSE 3334
-CMD [ "bash", "light.sh" ]
+CMD [ "bash", "light.sh"]
