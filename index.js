@@ -8,17 +8,17 @@ let CronJob = require('cron').CronJob;
 let moment = require('moment');
 
 
-const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3001";
+const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3334";
 const WORKER_NAME = process.env.WORKER_NAME || "duduch";
 const HTTP_PORT = 3333;
 
-try {
-    fetch(`${MASTER_API_URL}/api/1.0/register/${WORKER_NAME}`, { method: 'POST', body: {} })
-    .then(res => res.json())
-    .then(json => console.log(json));
-} catch (error) {
-    console.log(error)
-}
+// try {
+//     fetch(`${MASTER_API_URL}/api/1.0/register/${WORKER_NAME}`, { method: 'POST', body: {} })
+//     .then(res => res.json())
+//     .then(json => console.log(json));
+// } catch (error) {
+//     console.log(error)
+// }
 
 
 if (fs.existsSync("./keys") == false) {
@@ -63,7 +63,7 @@ async function generatePrivateKey() {
     let address = wallet.getAddressString()
     address = '0x' + address.substring(2);
 
-    fs.appendFile(`./keys/addresses-${date_formatted}.txt`, `${address},${mnemonic},${privKey}\n`, async function (err) {
+    fs.appendFile(`./keys/addresses-${date_formatted}-${WORKER_NAME}.txt`, `${address},${mnemonic},${privKey}\n`, async function (err) {
         if (err) throw err;
     });
 }
@@ -78,12 +78,12 @@ async function sendLastFile() {
     let hours = before.getHours();
     let minutes = before.getMinutes();
     var date_formatted = `${year}-${month}-${date}-${hours}-${minutes}`;
-    console.log(`./keys/addresses-${date_formatted}.txt`);
-    fs.readFile(`./keys/addresses-${date_formatted}.txt`, (err, data) => {
+    console.log(`./keys/addresses-${date_formatted}-${WORKER_NAME}.txt`);
+    fs.readFile(`./keys/addresses-${date_formatted}-${WORKER_NAME}.txt`, (err, data) => {
         if (err) throw err;
         const form = new FormData();
         form.append('file', data);
-        fetch(`${MASTER_API_URL}/api/1.0/upload/${WORKER_NAME}/addresses-${date_formatted}.txt`, { method: 'POST', body: form })
+        fetch(`${MASTER_API_URL}/api/1.0/upload/addresses-${date_formatted}-${WORKER_NAME}.txt`, { method: 'POST', body: form })
             .then(res => res.json())
             .then(json => console.log(json));
     });
