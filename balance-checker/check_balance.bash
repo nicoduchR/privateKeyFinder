@@ -3,16 +3,20 @@
 echo "INFO - START"
 process_file(){
     local addresses_file=$1
+    local ipc_file=$2
     echo "INFO - processing $addresses_file"
+    echo "INFO - ipc file: $ipc_file"
 
-    awk -f gen-bulk-ipc-query.awk $addresses_file | netcat -N -U /home/hduser/.ethereum/geth.ipc > bulk_results
+    awk -f gen-bulk-ipc-query.awk $addresses_file | netcat -N -U $ipc_file > bulk_results
 
     sed -i 's/[{}"]//g' bulk_results
 
     found_ether=$(awk -f check-bulk-results.awk bulk_results)
-    if [[ $found_ether -eq 1 ]]; then
+    if [[ $found_ether == "jackpot" ]]; then
         echo "INFO : FOUND SOMETHING, PRECISE ANALYSIS ONGOING"
-        awk -f precise-ipc-check.awk $addresses_file >> jackpot.txt
+        awk -v ipc_file="$ipc_file" -f precise-ipc-check.awk $addresses_file >> jackpot.txt
+    elif [[ $found_ether == "error" ]]; then
+        echo "ERROR : AN ERROR OCCURED WITH GETH DURING PROCESSING"
     else
         rm -fr $addresses_file
     fi
@@ -31,6 +35,7 @@ contact_mode=""
 addresses_file=""
 jackpot_file=""
 folder=""
+ipc_file=""
 
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -60,6 +65,10 @@ while [[ $# -gt 0 ]]; do
         folder=$2
         shift
         ;;
+    --ipc_file)
+        ipc_file=$2
+        shift
+        ;;
     *)
         echo "ERROR - unknown flag -> $key <-"
         exit 1
@@ -87,10 +96,10 @@ fi
 
 if [[ ! -z $folder ]]; then
     for file in $folder; do
-        process_file $file
+        process_file $file $ipc_file
     done
 else
-    process_file $addresses_file
+    process_file $addresses_file $ipc_file
 fi
 
 rm -fr "check_balance.lock"
