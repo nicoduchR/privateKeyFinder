@@ -1,24 +1,33 @@
-const Web3 = require("web3")
-const fetch = require('node-fetch');
 const fs = require('fs');
-
-
-// Docker
-let web3js = new Web3('ws://blockchain:8546');
-
-// Local
-// web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:8501"));
+const fetch = require('node-fetch');
 var minter = require('minterjs-wallet');
 const express = require('express');
 const app = express();
-console.log("WOLOLO")
+const FormData = require('form-data');
+let CronJob = require('cron').CronJob;
+let moment = require('moment');
 
 
-async function prout() {
-    var latest = await web3js.eth.getBlockNumber()
-    console.log(latest);
+const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3334";
+const WORKER_NAME = process.env.WORKER_NAME || "duduch";
+const HTTP_PORT = 3333;
+
+// try {
+//     fetch(`${MASTER_API_URL}/api/1.0/register/${WORKER_NAME}`, { method: 'POST', body: {} })
+//     .then(res => res.json())
+//     .then(json => console.log(json));
+// } catch (error) {
+//     console.log(error)
+// }
+
+
+if (fs.existsSync("./keys") == false) {
+    fs.mkdir("./keys", (err) => {
+        if (err) {
+            throw err;
+        }
+    })
 }
-
 
 
 (function (delay, callback) {
@@ -26,11 +35,27 @@ async function prout() {
 		callback();
 		setTimeout(loop, delay);
 	}; loop();
-})(100, function () {
+})(1, function () {
 	generatePrivateKey()
 });
 
+// Send last file every minutes
+var job = new CronJob('* * * * *', function() { // https://www.npmjs.com/package/cron
+    sendLastFile()
+}, null);
+job.start();
+
+
 async function generatePrivateKey() {
+    var datetime = new Date();
+    let date = ("0" + datetime.getDate()).slice(-2);
+    let month = ("0" + (datetime.getMonth() + 1)).slice(-2);
+    let year = datetime.getFullYear();
+    let hours = datetime.getHours();
+    let minutes = datetime.getMinutes();
+
+    let date_formatted = year + "-" + month + "-" + date + "-" + hours + "-" + minutes;
+
     const wallet= minter.generateWallet();
 
     let privKey = wallet.getPrivateKeyString()
@@ -38,31 +63,45 @@ async function generatePrivateKey() {
     let address = wallet.getAddressString()
     address = '0x' + address.substring(2);
 
-    var balance = await web3js.eth.getBalance(address);
-
-    fs.appendFile('./keys/addresses.txt', `Adresse : ${address} , Mnemonic : ${mnemonic}, Key : ${privKey}, Balance: ${balance} \n`, async function (err) {
+    fs.appendFile(`./keys/addresses-${date_formatted}-${WORKER_NAME}.txt`, `${address},${mnemonic},${privKey}\n`, async function (err) {
         if (err) throw err;
     });
+}
 
-    if(balance > 0){
-        fs.appendFile('./keys/not_empty_addresses.txt', `Adresse : ${address} , Key : ${wallet._mnemonic}, Balance: ${balance} \n`, async function (err) {
-            if (err) throw err;
-        });
-    }
+// sendLastFile()
+async function sendLastFile() {
+    var datetime = new Date()
+    var before = moment(datetime).subtract(1, "minutes").toDate()
+    let date = ("0" + before.getDate()).slice(-2);
+    let month = ("0" + (before.getMonth() + 1)).slice(-2);
+    let year = before.getFullYear();
+    let hours = before.getHours();
+    let minutes = before.getMinutes();
+    var date_formatted = `${year}-${month}-${date}-${hours}-${minutes}`;
+    console.log(`./keys/addresses-${date_formatted}-${WORKER_NAME}.txt`);
+    fs.readFile(`./keys/addresses-${date_formatted}-${WORKER_NAME}.txt`, (err, data) => {
+        if (err) throw err;
+        const form = new FormData();
+        form.append('file', data);
+        fetch(`${MASTER_API_URL}/api/1.0/upload/addresses-${date_formatted}-${WORKER_NAME}.txt`, { method: 'POST', body: form })
+            .then(res => res.json())
+            .then(json => console.log(json));
+    });
 }
 
 
 
-
-app.get('/download', function(req, res){
-    const file = `${__dirname}/keys/addresses.txt`;
+app.get('/download/:date', function(req, res){
+    const date = req.params.date
+    const file = `${__dirname}/keys/addresses-${date}.txt`;
     res.download(file); // Set disposition and send it.
 });
 
-app.get('/download-not-empty', function(req, res){
-    const file = `${__dirname}/keys/not_empty_addresses.txt`;
-    res.download(file); // Set disposition and send it.
+app.get('/download-not-empty/:date', function(req, res){
+    const date = req.params.date
+    const file = `${__dirname}/keys/not_empty_addresses-${date}.txt`;
+    res.download(file);
 });
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'));
+app.listen(HTTP_PORT, () => console.log('Private key finder listening on port ' + HTTP_PORT));
 

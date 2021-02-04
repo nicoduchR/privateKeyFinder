@@ -1,29 +1,34 @@
 version: '3.7'
 services:
-  # Blockchain
-  blockchain:
-    build: ./setup
-    image: nicoduch/blockchain
-    container_name: blockchain
-    ports:
-      - 8501:8501
-    volumes:
-      - private:/datadir
-    networks:
-    - test
   # Node.js private key finder
   node:
     build: ./
-    image: nicoduch/private-key-finder
+    image: redlabteam/private-key-finder
     ports:
-      - 3000:3000
+      - 3333:3333
+    environment:
+      WORKER_NAME: "Duduch-macbook"
+      MASTER_API_URL: http://blockchain-master:3334
     container_name: private-key-finder
     volumes:
-      - ./keys/addresses.txt:/app/keys/addresses.txt
+      - ./keys/:/app/keys/
+    networks:
+    - test
+  blockchain-master:
+    build: ./blockchain-master
+    image: redlabteam/blockchain-master
+    ports:
+      - 3334:3334
+    container_name: blockchain-master
+    volumes:
+      - ./blockchain-master/generators:/blockchain-master/generators
+      - ./blockchain-master/jackpot.txt:/blockchain-master/jackpot.txt
+      - private:/blockchain-master/datadir
     networks:
     - test
 volumes:
   private:
+  master:
 
 networks:
   test:

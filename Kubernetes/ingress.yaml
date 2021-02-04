@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-key
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/default-backend: master-api-service
+spec:
+  rules:
+  - host: neuroo-2.neuroo.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          serviceName: blockchain-service
+          servicePort: 8546
+  - host: neuroo-2.neuroo.ai
+    http:
+      paths:
+      - path: /master
+        pathType: Prefix
+        backend:
+          serviceName: master-api-service
+          servicePort: 3334

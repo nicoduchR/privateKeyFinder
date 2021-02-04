@@ -103,6 +103,6 @@ dist
 # TernJS port file
 .tern-port
 
-keys/
+*.txt
 
-*.tar
+.DS_Store
