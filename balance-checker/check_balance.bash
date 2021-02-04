@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+echo "INFO - START"
 process_file(){
     local addresses_file=$1
     echo "INFO - processing $addresses_file"
@@ -13,16 +13,25 @@ process_file(){
     if [[ $found_ether -eq 1 ]]; then
         echo "INFO : FOUND SOMETHING, PRECISE ANALYSIS ONGOING"
         awk -f precise-ipc-check.awk $addresses_file >> jackpot.txt
+    else
+        rm -fr $addresses_file
     fi
 
-    rm -fr $addresses_file
     rm -fr bulk_results
 }
+
+if [[ -e "check_balance.lock" ]]; then
+    echo "WARNING: ANOTHER INSTANCE OF SCRIPT IS RUNNING. STOPPING"
+    exit 1
+else
+    touch "check_balance.lock"
+fi
 
 contact_mode=""
 addresses_file=""
 jackpot_file=""
 folder=""
+
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
@@ -83,3 +92,7 @@ if [[ ! -z $folder ]]; then
 else
     process_file $addresses_file
 fi
+
+rm -fr "check_balance.lock"
+
+echo "INFO - END"
