@@ -27,6 +27,12 @@ docker build --no-cache -t redlabteam/master-api .
 cd ..
 ```
 
+```bash 
+cd blockchain-master
+docker build --no-cache -t redlabteam/blockchain-master .
+cd ..
+```
+
 ## Get the images :
 
 ```bash
