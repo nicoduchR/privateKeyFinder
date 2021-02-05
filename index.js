@@ -12,14 +12,6 @@ const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3334";
 const WORKER_NAME = process.env.WORKER_NAME || "duduch";
 const HTTP_PORT = 3333;
 
-// try {
-//     fetch(`${MASTER_API_URL}/api/1.0/register/${WORKER_NAME}`, { method: 'POST', body: {} })
-//     .then(res => res.json())
-//     .then(json => console.log(json));
-// } catch (error) {
-//     console.log(error)
-// }
-
 
 if (fs.existsSync("./keys") == false) {
     fs.mkdir("./keys", (err) => {
