@@ -24,10 +24,4 @@ spec:
         - name: WORKER_NAME
           value: kubernetes
         - name: MASTER_API_URL
-          value: http://master-api-service:3334
-        - name: BLOCKCHAIN_URL
-          value: ws://blockchain-service:8546
-      volumes:
-      - name: node-persistent-storage
-        persistentVolumeClaim:
-          claimName: node-claim
+          value: http://blockchain-master-service:3334

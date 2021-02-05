@@ -7,19 +7,19 @@ metadata:
     nginx.ingress.kubernetes.io/default-backend: master-api-service
 spec:
   rules:
-  - host: neuroo-2.neuroo.ai
+  - host: nico-2.neuroo.ai
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
-          serviceName: blockchain-service
+          serviceName: blockchain-master-service
           servicePort: 8546
   - host: neuroo-2.neuroo.ai
     http:
       paths:
-      - path: /master
+      - path: /node
         pathType: Prefix
         backend:
-          serviceName: master-api-service
+          serviceName: node-service
           servicePort: 3334
