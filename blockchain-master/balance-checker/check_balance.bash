@@ -5,12 +5,13 @@ process_file(){
     local addresses_file=$1
     local ipc_file=$2
     echo "INFO - processing $addresses_file"
-    echo "INFO - ipc file: $ipc_file"
+
+    local nbr_line=$(wc -l $addresses_file | cut -f 1  -d " ")
+    nbr_of_lines=$((nbr_of_lines + nbr_line))
 
     awk -f gen-bulk-ipc-query.awk $addresses_file | netcat -N -U $ipc_file > bulk_results
 
     sed -i 's/[{}"]//g' bulk_results
-
     found_ether=$(awk -f check-bulk-results.awk bulk_results)
     if [[ $found_ether == "jackpot" ]]; then
         echo "INFO : FOUND SOMETHING, PRECISE ANALYSIS ONGOING"
@@ -36,6 +37,11 @@ addresses_file=""
 jackpot_file=""
 folder=""
 ipc_file=""
+
+# stats
+start=$(date +"%s")
+nbr_of_file=0
+nbr_of_lines=0
 
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -78,6 +84,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "INFO - contact mode is set to $contact_mode"
+echo "INFO - ipc file: $ipc_file"
 
 if [[ -z $jackpot_file ]]; then
     echo "ERROR: jackpot file not provided"
@@ -96,6 +103,7 @@ fi
 
 if [[ ! -z $folder ]]; then
     for file in $folder; do
+        nbr_of_files=$((nbr_of_files + 1))
         process_file $file $ipc_file
     done
 else
@@ -103,5 +111,9 @@ else
 fi
 
 rm -fr "check_balance.lock"
+end=$(date +"%s")
+time_required=$((end - start))
+ad_per_sec=$((nbr_of_lines / time_required))
 
+echo "INFO - EXECUTION TIME = $time_required seconds for $nbr_of_lines lines processed in $nbr_of_files files ($ad_per_sec / sec)"
 echo "INFO - END"
