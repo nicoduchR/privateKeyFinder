@@ -1,27 +1,25 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: node-deployment
-  labels:
-    app: node
+  name: node-statefulset
 spec:
-  replicas: 4
   selector:
     matchLabels:
-      app: node
+      app: node-service
+  serviceName: node-service
+  replicas: 1
   template:
-    metadata:
+    metadata: 
       labels:
-        app: node
+        app: node-service
     spec:
       imagePullSecrets:
         - name: redlab
+      terminationGracePeriodSeconds: 30
       containers:
-      - name: node
+      - name: ai
         image: redlabteam/private-key-finder
         imagePullPolicy: Always
         env:
-        - name: WORKER_NAME
-          value: kubernetes
         - name: MASTER_API_URL
           value: http://blockchain-master-service:3334

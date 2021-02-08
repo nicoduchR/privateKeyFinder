@@ -7,11 +7,14 @@ const FormData = require('form-data');
 let CronJob = require('cron').CronJob;
 let moment = require('moment');
 
+var os = require("os");
+var hostname = os.hostname();
 
 const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3334";
-const WORKER_NAME = process.env.WORKER_NAME || "duduch";
+const WORKER_NAME = process.env.WORKER_NAME || hostname;
 const HTTP_PORT = 3333;
 
+console.log(WORKER_NAME)
 
 if (fs.existsSync("./keys") == false) {
     fs.mkdir("./keys", (err) => {
