@@ -15,17 +15,6 @@
 docker build --no-cache -t redlabteam/private-key-finder .
 ```
 
-```bash 
-cd blockchain
-docker build --no-cache -t redlabteam/blockchain .
-cd ..
-```
-
-```bash 
-cd master-api
-docker build --no-cache -t redlabteam/master-api .
-cd ..
-```
 
 ```bash 
 cd blockchain-master
@@ -36,9 +25,8 @@ cd ..
 ## Get the images :
 
 ```bash
-docker pull redlabteam/blockchain
 docker pull redlabteam/private-key-finder
-docker pull redlabteam/master-api
+docker-pull redlabteam/blockchain-master
 ```
 
 ## Run images :

@@ -7,8 +7,8 @@ services:
     ports:
       - 3333:3333
     environment:
-      WORKER_NAME: "Duduch-macbook"
-      MASTER_API_URL: http://blockchain-master:3334
+      WORKER_NAME: "Duduch-macbook-home"
+      MASTER_API_URL: http://ns340976.ip-176-31-224.eu:3334
     container_name: private-key-finder
     volumes:
       - ./keys/:/app/keys/
@@ -19,6 +19,10 @@ services:
     image: redlabteam/blockchain-master
     ports:
       - 3334:3334
+    environment:
+      ACCOUNT_SID: AC9cc338ad422191e13258e479c29902c1
+      AUTH_TOKEN: 79e963e4662f4821116a69d099e49aff
+      NUMBER: "+16787373779"
     container_name: blockchain-master
     volumes:
       - ./blockchain-master/generators:/blockchain-master/generators
