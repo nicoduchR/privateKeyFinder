@@ -78,6 +78,7 @@ async function sendLastFile() {
         fetch(`${MASTER_API_URL}/api/1.0/upload/addresses-${date_formatted}-${WORKER_NAME}.txt`, { method: 'POST', body: form })
             .then(res => res.json())
             .then(json => console.log(json));
+        fs.unlinkSync(`./keys/addresses-${date_formatted}-${WORKER_NAME}.txt`) // Delete file to save some space. 
     });
 }
 
