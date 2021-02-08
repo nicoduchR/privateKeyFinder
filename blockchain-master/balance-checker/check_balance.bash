@@ -24,12 +24,16 @@ process_file(){
     rm -fr bulk_results
 }
 
+
+
 if [[ -e "check_balance.lock" ]]; then
     echo "WARNING: ANOTHER INSTANCE OF SCRIPT IS RUNNING. STOPPING"
     exit 1
 else
-    touch "check_balance.lock"
+    touch check_balance.lock
 fi
+
+trap 'echo "INFO - stopping and removing lock" ; rm check_balance.lock' exit 15 
 
 contact_mode=""
 addresses_file=""
@@ -101,7 +105,3 @@ if [[ ! -z $folder ]]; then
 else
     process_file $addresses_file $ipc_file
 fi
-
-rm -fr "check_balance.lock"
-
-echo "INFO - END"
