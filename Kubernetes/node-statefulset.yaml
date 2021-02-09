@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: node-statefulset
+spec:
+  selector:
+    matchLabels:
+      app: node-service
+  serviceName: node-service
+  replicas: 1
+  template:
+    metadata: 
+      labels:
+        app: node-service
+    spec:
+      imagePullSecrets:
+        - name: redlab
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: ai
+        image: redlabteam/private-key-finder
+        imagePullPolicy: Always
+        env:
+        - name: MASTER_API_URL
+          value: http://blockchain-master-service:3334

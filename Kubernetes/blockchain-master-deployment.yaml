@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blockchain-master-deployment
+  labels:
+    app: blockchain-master
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: blockchain-master
+  template:
+    metadata:
+      labels:
+        app: blockchain-master
+    spec:
+      imagePullSecrets:
+        - name: redlab
+      containers:
+      - name: private-key-finder
+        image: redlabteam/blockchain-master
+        imagePullPolicy: Always
+        env:
+        - name: ACCOUNT_SID
+          value: AC9cc338ad422191e13258e479c29902c1
+        - name: AUTH_TOKEN
+          value: 79e963e4662f4821116a69d099e49aff
+        - name: NUMBER
+          value: "+16787373779"
