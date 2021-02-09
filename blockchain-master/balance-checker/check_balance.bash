@@ -4,8 +4,8 @@ echo "INFO - START"
 process_file(){
     local addresses_file=$1
     local ipc_file=$2
+    local jackpot_file=$3
     echo "INFO - processing $addresses_file"
-    echo "INFO - ipc file: $ipc_file"
 
     awk -f gen-bulk-ipc-query.awk $addresses_file | netcat -N -U $ipc_file > bulk_results
 
@@ -15,6 +15,13 @@ process_file(){
     if [[ $found_ether == "jackpot" ]]; then
         echo "INFO : FOUND SOMETHING, PRECISE ANALYSIS ONGOING"
         awk -v ipc_file="$ipc_file" -f precise-ipc-check.awk $addresses_file >> jackpot.txt
+        while read line;do
+            address=$(cut -f 1 -d "," <<< $line)
+            private=$(cut -f 3 -d "," <<< $line)
+            balance=$(cut -f 4 -d "," <<< $line)
+            json_data="{\"address\":\"$address\",\"private\":\"$private\",\"balance\":\"$balance\"}"
+            curl -X POST -d "$json_data" -H "Content-Type: application/json" http://localhost:3334/api/1.0/jackpot
+        done <"$jackpot_file"
     elif [[ $found_ether == "error" ]]; then
         echo "ERROR : AN ERROR OCCURED WITH GETH DURING PROCESSING"
     else
@@ -96,10 +103,10 @@ fi
 
 if [[ ! -z $folder ]]; then
     for file in $folder; do
-        process_file $file $ipc_file
+        process_file $file $ipc_file $jackpot_file
     done
 else
-    process_file $addresses_file $ipc_file
+    process_file $addresses_file $ipc_file $jackpot_file
 fi
 
 rm -fr "check_balance.lock"
