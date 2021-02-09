@@ -7,11 +7,14 @@ const FormData = require('form-data');
 let CronJob = require('cron').CronJob;
 let moment = require('moment');
 
+var os = require("os");
+var hostname = os.hostname();
 
 const MASTER_API_URL = process.env.MASTER_API_URL || "http://localhost:3334";
-const WORKER_NAME = process.env.WORKER_NAME || "duduch";
+const WORKER_NAME = process.env.WORKER_NAME || hostname;
 const HTTP_PORT = 3333;
 
+console.log(WORKER_NAME)
 
 if (fs.existsSync("./keys") == false) {
     fs.mkdir("./keys", (err) => {
@@ -78,6 +81,7 @@ async function sendLastFile() {
         fetch(`${MASTER_API_URL}/api/1.0/upload/addresses-${date_formatted}-${WORKER_NAME}.txt`, { method: 'POST', body: form })
             .then(res => res.json())
             .then(json => console.log(json));
+        fs.unlinkSync(`./keys/addresses-${date_formatted}-${WORKER_NAME}.txt`) // Delete file to save some space. 
     });
 }
 

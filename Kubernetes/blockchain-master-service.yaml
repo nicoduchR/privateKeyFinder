@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: master-api-service
+  name: blockchain-master-service
 spec:
   type: ClusterIP
   ports:
@@ -10,4 +10,4 @@ spec:
       port: 3334
       targetPort: 3334
   selector:
-    app: master-api
+    app: blockchain-master

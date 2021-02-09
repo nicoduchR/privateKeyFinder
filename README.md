@@ -50,9 +50,8 @@ docker-compose up -d master
 ## Push images :
 
 ```bash
-docker push redlabteam/blockchain
+docker push redlabteam/blockchain-master
 docker push redlabteam/private-key-finder
-docker push redlabteam/master-api
 ```
 
 ## Balance checker

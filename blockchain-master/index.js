@@ -39,6 +39,8 @@ const accountSid = process.env.ACCOUNT_SID;
 const authToken = process.env.AUTH_TOKEN;
 const numberFrom = process.env.NUMBER;
 
+console.log("SMS INIT: " + accountSid)
+
 const client = require('twilio')(accountSid, authToken);
 
 var numbersToMessage = ["+33783156204", "+33616530226"]
