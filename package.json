@@ -19,7 +19,7 @@
   "homepage": "https://github.com/nicoduchR/privateKeyFinder#readme",
   "dependencies": {
     "cron": "^1.8.2",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "form-data": "^3.0.0",
     "line-reader": "^0.4.0",
     "minterjs-wallet": "6.0.0",
